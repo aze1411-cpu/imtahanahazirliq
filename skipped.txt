@@ -14,3 +14,34 @@ Genetika #390: Orta ölçülü 1 gen neçə nukleosomdan ibarətdir?
 Genetika #398: Təkamüldə hansı xromosom dəyişilməsi daha mühüm rol oynayır?
 Genetika #407: DNT molekulunda TQA tripletinə müvafiq nRNT-nin antikodonunu göstərin.
 Genetika #418: Təsir prinsipinə görə genlər neçə qrupa bölünür?
+Biofizika #25 (təkrar): Biokimyəvi çevrilmələrdə ən kiçik sürətlə baş verən mərhələ
+Biofizika #42 (variant yoxdur): Aşağıdakı ifadələrdən hansı səhvdir:
+Biofizika #151 (variant yoxdur): Aşağıdakı ifadələrdən hansı düzgün deyil?
+Biofizika #153 (variant yoxdur): Hemoliz üçün eritrositlərin təcrübi qatılığı hansı cavabda göstərilmişdir?
+Biofizika #156 (variant yoxdur): Aşağıdakı ifadələrdən hansı səhfdir?
+Biofizika #158 (variant yoxdur): Maya göbələyi hüceyrələrinin elektroforetik sürətini öyrənən zaman dövrədəki gərginlik hansı cavabda göstərilmişdir?
+Biofizika #159 (variant yoxdur): … KCl məhlulunun hansı qatılığından istifadə olunur?
+Biofizika #213 (təkrar): Temperaturun dəyişməsi nəticəsində biomembranların lipid fazalarında klasterlərin əmələ gəlməsi hansı fiziki hadisənin nəticəsidir?
+Biofizika #297 (variant yoxdur): Adları çəkilən proseslərdən hansı biomembranlarda baş vermir?
+Biofizika #298 (variant yoxdur): Adları çəkilən proseslərdən hansı plazmatik membranlarda baş vermir?
+Biofizika #326 (variant yoxdur): Aşağıdakı ifadələrdən hansı düzgün deyil?
+Biofizika #329 (variant yoxdur): SF-4 spektrofotometri haqqında deyilənlərdən hansı səhfdir?
+Biofizika #330 (təkrar): Elektrokinetik hadisələri öyrənmək üçün aşağıdakı obyektlərdən hansından istifadə olunur?
+Biofizika #331 (variant yoxdur): Maya göbələyi hüceyrələrinin elektroforetik sürətini öyrənən zaman dövrədəki gərginlik hansı cavabda göstərilmişdir?
+Biofizika #332 (variant yoxdur): … KCl məhlulunun hansı qatılığından istifadə olunur?
+Biofizika #333 (təkrar): … U şəkilli boruların içərisi nə ilə doldurulur?
+Biofizika #334 (təkrar): Səthi gərilmə aşağıdakı hansı düsturla hesablanır?
+Biofizika #336 (təkrar): Səthi gərilmə necə cür olur?
+Biofizika #338 (təkrar): Səthi gərilmə əmsalının vahidi hansı cavabda düzgün göstərilmişdir?
+Biofizika #347 (təkrar): Bioloji proseslərin kinetik modelində sistemin parametri:
+Biofizika #366 (variant yoxdur): Doğru olan variantı göstərin
+Biofizika #385 (təkrar): Qapalı sistemin xüsusiyyətlərini göstər:
+Biofizika #389 (təkrar): Sərbəst enerji arta bilməz?
+Biofizika #426 (təkrar): Fəaliyyət potensialının yayılma sürəti asılıdır:
+Biofizika #471 (təkrar): Hansı proses hüceyrə membranının bioenergetikasının əsasında durur?
+Biofizika #475 (təkrar): Bioloji nizamlılıq dedikdə aşağıdakılardan hansı başa düşülür?
+Biofizika #476 (variant yoxdur): Aşağıdakılardan hansı bioloji nizamlılığa aid deyil?
+Biofizika #477 (variant yoxdur): Aşağıdakılardan hansı bioloji nazamlılığa aid deyil?
+Biofizika #492 (təkrar): İonların membranda daşınmasını təsvir edən Nernst-Plank tənliyinin ifadəsi
+Biofizika #495 (variant yoxdur): SF-4 spektrofotometri haqqında deyilənlərdən hansı səhfdir?
+Biofizika #499 (variant yoxdur): Aşağıdakı ifadələrdən hansı səhfdir?
