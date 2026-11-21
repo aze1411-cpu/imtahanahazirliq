@@ -47,11 +47,14 @@ const shuf=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1
 const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 const SUBS=DATA.subjects, ALLQ=SUBS.flatMap(s=>s.topics.flatMap(t=>t.qs));
 const L='ABCDE';
-let Q=null, timer=null;
+let Q=null, timer=null, lastRange=null;
+const num=q=>+q.id.split('-')[1];
+function chips(mx){let r='';for(let k=50;k<mx+50;k+=50){const t=Math.min(k,mx);r+=`<button class="tab" onclick="$('#rf').value=1;$('#rt').value=${t}">1–${t}</button>`;if(t==mx)break}return r}
 
 function home(){
   clearInterval(timer);
   const s=SUBS[st.sub], nw=Object.keys(st.wrong).length;
+  const mx=Math.max(...s.topics.flatMap(t=>t.qs.map(num))), rg=st.rng||{f:1};
   app.innerHTML=`<h1>📚 İmtahan hazırlığı</h1>
   <div class="tabs">${SUBS.map((x,i)=>`<button class="tab ${i==st.sub?'on':''}" onclick="st.sub=${i};save();home()">${x.name}</button>`).join('')}</div>
   <h2>Rejim</h2>
@@ -62,6 +65,14 @@ function home(){
   <h2>Qarışıq</h2>
   <div class="card row" style="justify-content:space-between"><div><b>${s.name}: 30 təsadüfi sual</b><div class="mu">bütün mövzulardan</div></div><button class="btn" onclick="start('${s.id}','mix')">Başla</button></div>
   <div class="card row" style="justify-content:space-between"><div><b>Səhvlərim</b><div class="mu">${nw} sual</div></div><button class="btn" ${nw?'':'disabled'} onclick="start('${s.id}','wrong')">Təkrar et</button></div>
+  <h2>Aralıq testi</h2>
+  <div class="card">
+   <div class="row"><span>Sual №</span><input id="rf" type="number" min="1" value="${rg.f}" style="width:80px"> – <input id="rt" type="number" min="1" value="${rg.t||mx}" style="width:80px"> <span class="mu">(1–${mx})</span></div>
+   <div class="tabs" style="margin:10px 0">${chips(mx)}</div>
+   <div class="row"><input id="rc" type="number" min="1" placeholder="Sual sayı (boş = hamısı)" value="${rg.c||''}" style="width:200px">
+    <select id="ro"><option value="rand" ${rg.o!='ord'?'selected':''}>Qarışıq</option><option value="ord" ${rg.o=='ord'?'selected':''}>Sıra ilə</option></select>
+    <button class="btn" onclick="start('','range')">Başla</button></div>
+  </div>
   <h2>Mövzular</h2>
   <input type="search" id="se" placeholder="🔍 Sual axtar…" oninput="srch(this.value)"><div id="sr"></div>
   <div id="tl">${s.topics.map(t=>{const b=st.best[t.id];return `<button class="card topic" onclick="start('${t.id}','topic')"><span><b>${t.name}</b><div class="mu">${t.qs.length} sual${b!=null?' · ən yaxşı: '+b+'%':''}</div><div class="bar"><i style="width:${b||0}%"></i></div></span><span>›</span></button>`}).join('')}</div>`;
@@ -77,6 +88,15 @@ function start(id,kind){
   const s=SUBS[st.sub];let qs,name;
   if(kind=='mix'){qs=shuf(s.topics.flatMap(t=>t.qs)).slice(0,30);name=s.name+' – qarışıq'}
   else if(kind=='wrong'){qs=shuf(ALLQ.filter(q=>st.wrong[q.id]));name='Səhvlərim'}
+  else if(kind=='range'){
+    const r0=$('#rf')?{f:+$('#rf').value||1,t:+$('#rt').value||0,c:+$('#rc').value||0,o:$('#ro').value}:lastRange;
+    lastRange=r0;st.rng=r0;save();
+    let r=s.topics.flatMap(t=>t.qs).filter(q=>num(q)>=r0.f&&num(q)<=(r0.t||1e9));
+    if(!r.length){alert('Bu aralıqda sual tapılmadı');return}
+    if(r0.c&&r0.c<r.length)r=shuf(r).slice(0,r0.c);
+    qs=r0.o=='ord'?r.sort((a,b)=>num(a)-num(b)):shuf(r);
+    name=s.name+' – №'+r0.f+'–'+(r0.t||'son');
+  }
   else{const t=s.topics.find(t=>t.id==id);qs=shuf(t.qs);name=s.name+' – '+t.name}
   qs=qs.map(q=>{const o=shuf(q.o.map((x,i)=>[x,i==q.a]));return{id:q.id,q:q.q,o:o.map(x=>x[0]),a:o.findIndex(x=>x[1])}});
   Q={kind,id,name,qs,i:0,ans:{},exam:st.mode=='exam'&&kind!='wrong',left:qs.length*60};
