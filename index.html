@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>İmtahan Hazırlığı</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--tx:#1b1f24;--mu:#6b7480;--bd:#dde1e6;--ac:#2563eb;--ok:#16a34a;--okb:#dcfce7;--no:#dc2626;--nob:#fee2e2}
+@media(prefers-color-scheme:dark){:root{--bg:#14171b;--card:#1e2329;--tx:#e8eaed;--mu:#9aa3ad;--bd:#2f363e;--ac:#60a5fa;--ok:#4ade80;--okb:#14351f;--no:#f87171;--nob:#3b1818}}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--tx)}
+main{max-width:760px;margin:0 auto;padding:16px}
+h1{font-size:1.4rem;margin:8px 0 16px}h2{font-size:1.05rem;margin:20px 0 8px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:10px}
+button{font:inherit;color:inherit;cursor:pointer}
+.btn{background:var(--ac);color:#fff;border:0;border-radius:8px;padding:10px 16px}
+.btn.sec{background:transparent;color:var(--tx);border:1px solid var(--bd)}
+.tabs,.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.tab{padding:8px 14px;border:1px solid var(--bd);border-radius:999px;background:var(--card)}
+.tab.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.topic{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;text-align:left}
+.mu{color:var(--mu);font-size:.88rem}
+.bar{height:6px;background:var(--bd);border-radius:3px;overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;background:var(--ok)}
+.q{font-size:1.1rem;font-weight:600;margin:8px 0 14px}
+.opt{display:flex;gap:10px;width:100%;text-align:left;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:11px 12px;margin-bottom:8px}
+.opt b{min-width:1.4em;color:var(--mu)}
+.opt:hover:not(:disabled){border-color:var(--ac)}.opt.sel{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac)}
+.opt.ok{background:var(--okb);border-color:var(--ok)}.opt.no{background:var(--nob);border-color:var(--no)}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.score{font-size:2.2rem;font-weight:700}
+.nav{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0}
+.nav button{width:34px;height:34px;border:1px solid var(--bd);border-radius:6px;background:var(--card);font-size:.85rem}
+.nav .done{background:var(--ac);color:#fff;border-color:var(--ac)}.nav .cur{outline:2px solid var(--tx)}
+input[type=search]{width:100%;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);font:inherit}
+.wrong{border-left:4px solid var(--no)}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script src="data.js"></script>
+<script>
+const $=s=>document.querySelector(s), app=$('#app');
+const LS={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let st=LS.get('st',{wrong:{},best:{},mode:'train',sub:0});
+const save=()=>LS.set('st',st);
+const shuf=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const SUBS=DATA.subjects, ALLQ=SUBS.flatMap(s=>s.topics.flatMap(t=>t.qs));
+const L='ABCDE';
+let Q=null, timer=null;
+
+function home(){
+  clearInterval(timer);
+  const s=SUBS[st.sub], nw=Object.keys(st.wrong).length;
+  app.innerHTML=`<h1>📚 İmtahan hazırlığı</h1>
+  <div class="tabs">${SUBS.map((x,i)=>`<button class="tab ${i==st.sub?'on':''}" onclick="st.sub=${i};save();home()">${x.name}</button>`).join('')}</div>
+  <h2>Rejim</h2>
+  <div class="tabs">
+   <button class="tab ${st.mode=='train'?'on':''}" onclick="st.mode='train';save();home()">Təlim (cavab dərhal görünür)</button>
+   <button class="tab ${st.mode=='exam'?'on':''}" onclick="st.mode='exam';save();home()">İmtahan (taymerli)</button>
+  </div>
+  <h2>Qarışıq</h2>
+  <div class="card row" style="justify-content:space-between"><div><b>${s.name}: 30 təsadüfi sual</b><div class="mu">bütün mövzulardan</div></div><button class="btn" onclick="start('${s.id}','mix')">Başla</button></div>
+  <div class="card row" style="justify-content:space-between"><div><b>Səhvlərim</b><div class="mu">${nw} sual</div></div><button class="btn" ${nw?'':'disabled'} onclick="start('${s.id}','wrong')">Təkrar et</button></div>
+  <h2>Mövzular</h2>
+  <input type="search" id="se" placeholder="🔍 Sual axtar…" oninput="srch(this.value)"><div id="sr"></div>
+  <div id="tl">${s.topics.map(t=>{const b=st.best[t.id];return `<button class="card topic" onclick="start('${t.id}','topic')"><span><b>${t.name}</b><div class="mu">${t.qs.length} sual${b!=null?' · ən yaxşı: '+b+'%':''}</div><div class="bar"><i style="width:${b||0}%"></i></div></span><span>›</span></button>`}).join('')}</div>`;
+}
+function srch(v){
+  v=v.trim().toLowerCase();const r=$('#sr'),tl=$('#tl');
+  if(v.length<3){r.innerHTML='';tl.style.display='';return}
+  tl.style.display='none';
+  const f=ALLQ.filter(q=>q.q.toLowerCase().includes(v)).slice(0,20);
+  r.innerHTML=f.map(q=>`<div class="card"><div class="q">${esc(q.q)}</div><div class="mu">Cavab:</div> ${esc(q.o[q.a])}</div>`).join('')||'<p class="mu">Tapılmadı</p>';
+}
+function start(id,kind){
+  const s=SUBS[st.sub];let qs,name;
+  if(kind=='mix'){qs=shuf(s.topics.flatMap(t=>t.qs)).slice(0,30);name=s.name+' – qarışıq'}
+  else if(kind=='wrong'){qs=shuf(ALLQ.filter(q=>st.wrong[q.id]));name='Səhvlərim'}
+  else{const t=s.topics.find(t=>t.id==id);qs=shuf(t.qs);name=s.name+' – '+t.name}
+  qs=qs.map(q=>{const o=shuf(q.o.map((x,i)=>[x,i==q.a]));return{id:q.id,q:q.q,o:o.map(x=>x[0]),a:o.findIndex(x=>x[1])}});
+  Q={kind,id,name,qs,i:0,ans:{},exam:st.mode=='exam'&&kind!='wrong',left:qs.length*60};
+  clearInterval(timer);
+  if(Q.exam)timer=setInterval(()=>{Q.left--;tick();if(Q.left<=0)finish()},1000);
+  show();
+}
+const fmt=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+function tick(){const e=$('#tm');if(e)e.textContent='⏱ '+fmt(Q.left)}
+function show(){
+  const q=Q.qs[Q.i],a=Q.ans[Q.i],rev=!Q.exam&&a!=null;
+  app.innerHTML=`<div class="top"><button class="btn sec" onclick="if(confirm('Çıxmaq istəyirsən?'))home()">← Çıx</button><span class="mu">${Q.name}</span><span id="tm" class="mu">${Q.exam?'⏱ '+fmt(Q.left):''}</span></div>
+  <div class="mu">Sual ${Q.i+1} / ${Q.qs.length}</div>
+  <div class="card"><div class="q">${esc(q.q)}</div>
+  ${q.o.map((o,i)=>{let c='';if(rev)c=i==q.a?'ok':i==a?'no':'';else if(a==i)c='sel';return `<button class="opt ${c}" ${rev?'disabled':''} onclick="pick(${i})"><b>${L[i]}</b><span>${esc(o)}</span></button>`}).join('')}</div>
+  <div class="row" style="justify-content:space-between">
+   <button class="btn sec" ${Q.i?'':'disabled'} onclick="go(-1)">← Əvvəlki</button>
+   ${Q.i==Q.qs.length-1?`<button class="btn" onclick="finish()">Bitir</button>`:`<button class="btn" onclick="go(1)">Növbəti →</button>`}
+  </div>
+  <div class="nav">${Q.qs.map((_,i)=>`<button class="${Q.ans[i]!=null?'done':''} ${i==Q.i?'cur':''}" onclick="Q.i=${i};show()">${i+1}</button>`).join('')}</div>`;
+}
+function pick(i){
+  if(!Q.exam&&Q.ans[Q.i]!=null)return;
+  Q.ans[Q.i]=i;
+  if(!Q.exam){const q=Q.qs[Q.i];if(i==q.a)delete st.wrong[q.id];else st.wrong[q.id]=1;save()}
+  show();
+}
+function go(d){Q.i=Math.max(0,Math.min(Q.qs.length-1,Q.i+d));show()}
+function finish(){
+  clearInterval(timer);
+  const n=Q.qs.length;let ok=0;const bad=[];
+  Q.qs.forEach((q,i)=>{if(Q.ans[i]==q.a){ok++;delete st.wrong[q.id]}else{st.wrong[q.id]=1;bad.push([q,Q.ans[i]])}});
+  const p=Math.round(ok/n*100);
+  if(Q.kind=='topic'&&(st.best[Q.id]||0)<p)st.best[Q.id]=p;
+  save();
+  app.innerHTML=`<h1>Nəticə</h1><div class="card"><div class="score">${ok} / ${n} <span class="mu">(${p}%)</span></div>
+  <div class="row" style="margin-top:10px"><button class="btn" onclick="home()">Ana səhifə</button><button class="btn sec" onclick="start('${Q.id}','${Q.kind}')">Yenidən</button></div></div>
+  <h2>${bad.length?'Səhv cavablar ('+bad.length+')':'🎉 Hamısı düzgündür!'}</h2>
+  ${bad.map(([q,a])=>`<div class="card wrong"><div class="q">${esc(q.q)}</div><div class="mu">Sənin cavabın:</div> ${a==null?'<i>cavablanmayıb</i>':esc(q.o[a])}<div class="mu" style="margin-top:6px">Düzgün cavab:</div> <b>${esc(q.o[q.a])}</b></div>`).join('')}`;
+}
+document.addEventListener('keydown',e=>{if(!Q||!$('.opt'))return;const k='12345'.indexOf(e.key);if(k>=0&&k<5)pick(k);if(e.key=='Enter')go(1)});
+home();
+</script>
+</body>
+</html>
